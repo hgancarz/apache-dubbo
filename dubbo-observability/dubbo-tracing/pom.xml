@@ -21,7 +21,7 @@
     <groupId>org.apache.dubbo</groupId>
     <artifactId>dubbo-metrics</artifactId>
     <version>${revision}</version>
-    <relativePath>../pom.xml</relativePath>
+    <relativePath>../dubbo-metrics/pom.xml</relativePath>
   </parent>
 
   <artifactId>dubbo-tracing</artifactId>

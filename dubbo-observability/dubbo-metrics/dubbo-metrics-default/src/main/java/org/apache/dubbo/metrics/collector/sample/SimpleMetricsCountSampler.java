@@ -55,11 +55,7 @@ public abstract class SimpleMetricsCountSampler<S, K, M extends Metric> implemen
 
         this.countConfigure(sampleConfigure);
 
-        Map<M, AtomicLong> metricAtomic = metricCounter.get(metricsName);
-
-        if (metricAtomic == null) {
-            metricAtomic = metricCounter.computeIfAbsent(metricsName, k -> new ConcurrentHashMap<>());
-        }
+        Map<M, AtomicLong> metricAtomic = metricCounter.computeIfAbsent(metricsName, k -> new ConcurrentHashMap<>());
 
         Assert.notNull(sampleConfigure.getMetric(), "metrics is null");
 

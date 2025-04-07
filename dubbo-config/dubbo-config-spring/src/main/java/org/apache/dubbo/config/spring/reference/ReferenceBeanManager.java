@@ -43,20 +43,21 @@ import org.springframework.context.ApplicationContextAware;
 import static org.apache.dubbo.common.constants.LoggerCodeConstants.CONFIG_DUBBO_BEAN_INITIALIZER;
 
 public class ReferenceBeanManager implements ApplicationContextAware {
+
     public static final String BEAN_NAME = "dubboReferenceBeanManager";
     private final ErrorTypeAwareLogger logger = LoggerFactory.getErrorTypeAwareLogger(getClass());
 
     // reference key -> reference bean names
-    private ConcurrentMap<String, List<String>> referenceKeyMap = new ConcurrentHashMap<>();
+    private final ConcurrentMap<String, List<String>> referenceKeyMap = new ConcurrentHashMap<>();
 
     // reference alias -> reference bean name
-    private ConcurrentMap<String, String> referenceAliasMap = new ConcurrentHashMap<>();
+    private final ConcurrentMap<String, String> referenceAliasMap = new ConcurrentHashMap<>();
 
     // reference bean name -> ReferenceBean
-    private ConcurrentMap<String, ReferenceBean> referenceBeanMap = new ConcurrentHashMap<>();
+    private final ConcurrentMap<String, ReferenceBean> referenceBeanMap = new ConcurrentHashMap<>();
 
     // reference key -> ReferenceConfig instance
-    private ConcurrentMap<String, ReferenceConfig> referenceConfigMap = new ConcurrentHashMap<>();
+    private final ConcurrentMap<String, ReferenceConfig> referenceConfigMap = new ConcurrentHashMap<>();
 
     private ApplicationContext applicationContext;
     private volatile boolean initialized = false;
@@ -74,8 +75,8 @@ public class ReferenceBeanManager implements ApplicationContextAware {
                     "",
                     "Early initialize reference bean before DubboConfigBeanInitializer,"
                             + " the BeanPostProcessor has not been loaded at this time, which may cause abnormalities in some components (such as seata): "
-                            + referenceBeanName
-                            + " = " + ReferenceBeanSupport.generateReferenceKey(referenceBean, applicationContext));
+                            + referenceBeanName + " = "
+                            + ReferenceBeanSupport.generateReferenceKey(referenceBean, applicationContext));
         }
         String referenceKey = getReferenceKeyByBeanName(referenceBeanName);
         if (StringUtils.isEmpty(referenceKey)) {
@@ -112,13 +113,13 @@ public class ReferenceBeanManager implements ApplicationContextAware {
     }
 
     public void registerReferenceKeyAndBeanName(String referenceKey, String referenceBeanNameOrAlias) {
-        List<String> list =
-                ConcurrentHashMapUtils.computeIfAbsent(referenceKeyMap, referenceKey, (key) -> new ArrayList<>());
-        if (!list.contains(referenceBeanNameOrAlias)) {
-            list.add(referenceBeanNameOrAlias);
-            // register bean name as alias
-            referenceAliasMap.put(referenceBeanNameOrAlias, list.get(0));
-        }
+        ConcurrentHashMapUtils.computeIfAbsent(referenceKeyMap, referenceKey, (key) -> new ArrayList<>(), list -> {
+            if (!list.contains(referenceBeanNameOrAlias)) {
+                list.add(referenceBeanNameOrAlias);
+                // register bean name as alias
+                referenceAliasMap.put(referenceBeanNameOrAlias, list.get(0));
+            }
+        });
     }
 
     public ReferenceBean getById(String referenceBeanNameOrAlias) {

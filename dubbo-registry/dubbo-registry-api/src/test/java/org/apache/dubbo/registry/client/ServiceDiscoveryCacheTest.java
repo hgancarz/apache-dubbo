@@ -122,4 +122,46 @@ class ServiceDiscoveryCacheTest {
 
         applicationModel.destroy();
     }
+
+    @Test
+    void testRetryWhenUpdateFailed() {
+        ApplicationModel applicationModel = FrameworkModel.defaultModel().newApplication();
+        applicationModel.getApplicationConfigManager().setApplication(new ApplicationConfig("Test"));
+
+        URL registryUrl = URL.valueOf("mock://127.0.0.1:12345").addParameter(METADATA_INFO_CACHE_EXPIRE_KEY, 10);
+        MockServiceDiscovery mockServiceDiscovery =
+                Mockito.spy(new MockServiceDiscovery(applicationModel, registryUrl));
+
+        mockServiceDiscovery.register(URL.valueOf("mock://127.0.0.1:12345")
+                .setServiceInterface("org.apache.dubbo.registry.service.DemoService"));
+
+        Mockito.doNothing().when(mockServiceDiscovery).doRegister(Mockito.any(ServiceInstance.class));
+        // first time
+        Assertions.assertDoesNotThrow(() -> mockServiceDiscovery.register());
+
+        mockServiceDiscovery.register(URL.valueOf("mock://127.0.0.1:12345")
+                .setServiceInterface("org.apache.dubbo.registry.service.TestService"));
+
+        Mockito.doThrow(new RuntimeException())
+                .when(mockServiceDiscovery)
+                .reportMetadata(Mockito.any(MetadataInfo.class));
+        Assertions.assertThrows(RuntimeException.class, mockServiceDiscovery::update);
+
+        Mockito.verify(mockServiceDiscovery, Mockito.times(1))
+                .doUpdate(Mockito.any(ServiceInstance.class), Mockito.any(ServiceInstance.class));
+
+        Mockito.doNothing().when(mockServiceDiscovery).reportMetadata(Mockito.any(MetadataInfo.class));
+        // second time
+        Assertions.assertDoesNotThrow(mockServiceDiscovery::update);
+
+        Mockito.verify(mockServiceDiscovery, Mockito.times(2))
+                .doUpdate(Mockito.any(ServiceInstance.class), Mockito.any(ServiceInstance.class));
+
+        Assertions.assertDoesNotThrow(mockServiceDiscovery::update);
+        // if update success, revision won't changed when next scheduled time, so doUpdate will not be called
+        Mockito.verify(mockServiceDiscovery, Mockito.times(2))
+                .doUpdate(Mockito.any(ServiceInstance.class), Mockito.any(ServiceInstance.class));
+
+        applicationModel.destroy();
+    }
 }

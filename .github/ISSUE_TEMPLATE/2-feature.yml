@@ -38,7 +38,7 @@ body:
     label: Pre-check
     options:
       - label: >
-          I am sure that all the content I provide is in English.
+         "I am certain that all the content I provide is in English."
         required: true
 
 - type: checkboxes

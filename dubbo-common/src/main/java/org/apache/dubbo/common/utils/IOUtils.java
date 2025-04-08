@@ -21,7 +21,6 @@ import org.apache.dubbo.common.constants.CommonConstants;
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -36,6 +35,7 @@ import java.io.StringWriter;
 import java.io.Writer;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -168,7 +168,7 @@ public class IOUtils {
             return new String[0];
         }
 
-        return readLines(new FileInputStream(file));
+        return readLines(Files.newInputStream(file.toPath()));
     }
 
     /**
@@ -228,7 +228,7 @@ public class IOUtils {
         if (file == null) {
             throw new IOException("File is null.");
         }
-        writeLines(new FileOutputStream(file), lines);
+        writeLines(Files.newOutputStream(file.toPath()), lines);
     }
 
     /**

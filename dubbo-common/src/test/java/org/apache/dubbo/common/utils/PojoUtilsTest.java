@@ -65,23 +65,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class PojoUtilsTest {
 
-    @Test
-    public void testJava8Time() {
-        LocalDateTime nowDateTime = LocalDateTime.now();
-        Object generalized = PojoUtils.generalize(nowDateTime);
-        Object realized = PojoUtils.realize(generalized, LocalDateTime.class);
-        assertEquals(nowDateTime, realized);
-
-        LocalDate nowDate = LocalDate.now();
-        generalized = PojoUtils.generalize(nowDate);
-        realized = PojoUtils.realize(generalized, LocalDate.class);
-        assertEquals(nowDate, realized);
-
-        LocalTime nowTime = LocalTime.now();
-        generalized = PojoUtils.generalize(nowTime);
-        realized = PojoUtils.realize(generalized, LocalTime.class);
-        assertEquals(nowTime, realized);
-    }
+    
 
     BigPerson bigPerson;
 
@@ -790,18 +774,20 @@ class PojoUtilsTest {
 
     @Test
     void testJava8Time() {
+        LocalDateTime nowDateTime = LocalDateTime.now();
+        Object generalized = PojoUtils.generalize(nowDateTime);
+        Object realized = PojoUtils.realize(generalized, LocalDateTime.class);
+        assertEquals(nowDateTime, realized);
 
-        Object localDateTimeGen = PojoUtils.generalize(LocalDateTime.now());
-        Object localDateTime = PojoUtils.realize(localDateTimeGen, LocalDateTime.class);
-        assertEquals(localDateTimeGen, localDateTime.toString());
+        LocalDate nowDate = LocalDate.now();
+        generalized = PojoUtils.generalize(nowDate);
+        realized = PojoUtils.realize(generalized, LocalDate.class);
+        assertEquals(nowDate, realized);
 
-        Object localDateGen = PojoUtils.generalize(LocalDate.now());
-        Object localDate = PojoUtils.realize(localDateGen, LocalDate.class);
-        assertEquals(localDateGen, localDate.toString());
-
-        Object localTimeGen = PojoUtils.generalize(LocalTime.now());
-        Object localTime = PojoUtils.realize(localTimeGen, LocalTime.class);
-        assertEquals(localTimeGen, localTime.toString());
+        LocalTime nowTime = LocalTime.now();
+        generalized = PojoUtils.generalize(nowTime);
+        realized = PojoUtils.realize(generalized, LocalTime.class);
+        assertEquals(nowTime, realized);
     }
 
     @Test

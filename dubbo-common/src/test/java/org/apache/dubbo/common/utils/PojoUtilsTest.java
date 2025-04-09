@@ -65,6 +65,24 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class PojoUtilsTest {
 
+    @Test
+    public void testJava8Time() {
+        LocalDateTime nowDateTime = LocalDateTime.now();
+        Object generalized = PojoUtils.generalize(nowDateTime);
+        Object realized = PojoUtils.realize(generalized, LocalDateTime.class);
+        assertEquals(nowDateTime, realized);
+
+        LocalDate nowDate = LocalDate.now();
+        generalized = PojoUtils.generalize(nowDate);
+        realized = PojoUtils.realize(generalized, LocalDate.class);
+        assertEquals(nowDate, realized);
+
+        LocalTime nowTime = LocalTime.now();
+        generalized = PojoUtils.generalize(nowTime);
+        realized = PojoUtils.realize(generalized, LocalTime.class);
+        assertEquals(nowTime, realized);
+    }
+
     BigPerson bigPerson;
 
     {

@@ -362,6 +362,17 @@ public class PojoUtils {
             return Enum.valueOf((Class<Enum>) type, (String) pojo);
         }
 
+        // Handle Java 8 time classes
+        if (type == LocalDate.class && pojo instanceof String) {
+            return LocalDate.parse((String) pojo);
+        }
+        if (type == LocalDateTime.class && pojo instanceof String) {
+            return LocalDateTime.parse((String) pojo);
+        }
+        if (type == LocalTime.class && pojo instanceof String) {
+            return LocalTime.parse((String) pojo);
+        }
+
         if (ReflectUtils.isPrimitives(pojo.getClass())
                 && !(type != null
                         && type.isArray()
